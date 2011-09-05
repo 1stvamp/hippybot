@@ -1,2 +1,3 @@
 jabberbot
+xmpppy
 lazy-reload
