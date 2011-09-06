@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
-from jabberbot import botcmd, JabberBot
+from jabberbot import botcmd, JabberBot, xmpp
 from ConfigParser import ConfigParser
 from optparse import OptionParser
 
@@ -26,6 +26,26 @@ class HippyBot(JabberBot):
             return
         if message.lstrip().startswith(self.mention_test):
             print message
+
+    def join_room(self, room, username=None, password=None):
+        """Join the specified multi-user chat room
+
+        If username is NOT provided fallback to node part of JID"""
+        # TODO fix namespacestrings and history settings
+        NS_MUC = 'http://jabber.org/protocol/muc'
+        if username is None:
+            # TODO use xmpppy function getNode
+            username = self.__username.split('@')[0]
+        my_room_JID = '/'.join((room, username))
+        pres = xmpp.Presence(to=my_room_JID)
+        if password is not None:
+            pres.setTag('x',namespace=NS_MUC).setTagData('password',password)
+        else:
+            pres.setTag('x',namespace=NS_MUC)
+        # Don't pull the history back from the server on joining channel
+        pres.getTag('x').addChild('history', {'maxchars': '0',
+                                                'maxstanzas': '0'})
+        self.connect().send(pres)
 
 def main():
     parser = OptionParser(usage="""usage: %prog [options]""")
