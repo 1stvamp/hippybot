@@ -17,6 +17,15 @@ class HippyBot(JabberBot):
                                         password=config['connection']['password'])
         for channel in self.channels:
             self.join_room(channel, config['connection']['nickname'])
+        self.mention_test = "@%s " % (config['connection']['nickname']
+                                        .split(' ')[0].lower(),)
+
+    def callback_message(self, conn, mess):
+        message = mess.getBody()
+        if not message:
+            return
+        if message.lstrip().startswith(self.mention_test):
+            print message
 
 def main():
     parser = OptionParser(usage="""usage: %prog [options]""")
