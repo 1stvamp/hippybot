@@ -4,6 +4,10 @@ import sys
 from jabberbot import botcmd, JabberBot, xmpp
 from ConfigParser import ConfigParser
 from optparse import OptionParser
+from inspect import ismethod
+
+import logging
+logging.basicConfig()
 
 def do_import(name):
     mod = __import__(name)
@@ -77,20 +81,20 @@ class HippyBot(JabberBot):
             self.plugins[name] = module
             command = getattr(module, name, None)
             if not command:
-                plugin = getattr(module, 'Plugin')(bot=self)
-                commands = getattr(plugin, 'commands', [])
-
-                if len(commands) == 0:
-                    funcs = [plugin.run]
-                else:
-                    funcs = [getattr(plugin, c) for c in commands]
+                plugin = getattr(module, 'Plugin')()
+                plugin.bot = self
+                commands = [c for c in dir(plugin)]
+                funcs = []
+                for command in commands:
+                    m = getattr(plugin, command)
+                    if ismethod(m) and getattr(m, '_jabberbot_command', False):
+                        funcs.append((command, m))
             else:
-                funcs = [command]
+                funcs = [(name, command)]
 
-            for func in funcs:
-                cmd = botcmd(func)
-                setattr(self, name, func)
-                self.commands[name] = func
+            for command, func in funcs:
+                setattr(self, command, func)
+                self.commands[command] = func
 
 def main():
     parser = OptionParser(usage="""usage: %prog [options]""")
