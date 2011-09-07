@@ -5,6 +5,7 @@ from jabberbot import botcmd, JabberBot, xmpp
 from ConfigParser import ConfigParser
 from optparse import OptionParser
 from inspect import ismethod
+from lazy_reload import lazy_reload
 
 import logging
 logging.basicConfig()
@@ -51,7 +52,6 @@ class HippyBot(JabberBot):
             return
 
         if message.startswith(self.mention_test):
-            print message
             mess.setBody(message[len(self.mention_test):])
             return super(HippyBot, self).callback_message(conn, mess)
 
@@ -74,11 +74,15 @@ class HippyBot(JabberBot):
                                                 'maxstanzas': '0'})
         self.connect().send(pres)
 
-    def load_plugins(self):
+    @botcmd
+    def load_plugins(self, mess=None, args=None):
         for path in self.plugin_modules:
             name = path.split('.')[-1]
+            if name in self.plugins:
+                lazy_reload(self.plugins[name])
             module = do_import(path)
             self.plugins[name] = module
+
             command = getattr(module, name, None)
             if not command:
                 plugin = getattr(module, 'Plugin')()
@@ -95,6 +99,8 @@ class HippyBot(JabberBot):
             for command, func in funcs:
                 setattr(self, command, func)
                 self.commands[command] = func
+        if mess:
+            return 'Reloading plugin modules and classes..'
 
 def main():
     parser = OptionParser(usage="""usage: %prog [options]""")
