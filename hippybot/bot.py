@@ -25,6 +25,7 @@ class HippyBot(JabberBot):
     _global_commands = []
     _command_aliases = {}
     _last_message = ''
+    _restart = False
 
     def __init__(self, config):
         self._config = config
@@ -84,7 +85,7 @@ class HippyBot(JabberBot):
         """
         NS_MUC = 'http://jabber.org/protocol/muc'
         if username is None:
-            username = self.__username.split('@')[0]
+            username = self._username.split('@')[0]
         my_room_JID = '/'.join((room, username))
         pres = xmpp.Presence(to=my_room_JID)
         if password is not None:
@@ -140,6 +141,21 @@ class HippyBot(JabberBot):
         if mess:
             return 'Reloading plugin modules and classes..'
 
+    @botcmd
+    def restart(self, mess, args):
+        self._restart = True
+        self.quit()
+
+    def shutdown(self):
+        if self._restart:
+            raise RestartBot
+
+class RestartBot(Exception):
+    """Interrupt to signal the bot should be restarted by it's runner
+    function/class.
+    """
+    pass
+
 def main():
     parser = OptionParser(usage="""usage: %prog [options]""")
 
@@ -150,15 +166,19 @@ def main():
         print >> sys.stderr, 'ERROR: Missing config file path'
         return 1
 
-    config = ConfigParser()
-    config.read(options.config_path)
-    try:
-        bot = HippyBot(config._sections)
-        bot.serve_forever()
-    except IndexError, e:
-        print >> sys.stderr, "ERROR: %s" % (e,)
-        return 1
-    return 0
+    while True:
+        config = ConfigParser()
+        config.read(options.config_path)
+        try:
+            bot = HippyBot(config._sections)
+            bot.serve_forever()
+        except RestartBot:
+            continue
+        except IndexError, e:
+            print >> sys.stderr, "ERROR: %s" % (e,)
+            return 1
+        else:
+            return 0
 
 if __name__ == '__main__':
     sys.exit(main())
