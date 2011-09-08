@@ -22,35 +22,38 @@ class HippyBot(JabberBot):
     hipchat.com chatroom/IM service.
     """
 
-    global_commands = []
-    command_aliases = {}
+    _global_commands = []
+    _command_aliases = {}
+    _last_message = ''
 
     def __init__(self, config):
-        self.config = config
+        self._config = config
 
         # Make sure we don't timeout after 150s
         self.PING_FREQUENCY = 60
 
         prefix = config['connection']['username'].split('_')[0]
-        self.channels = ["%s_%s@%s" % (prefix, c.strip(), 'conf.hipchat.com')
+        self._channels = ["%s_%s@%s" % (prefix, c.strip(), 'conf.hipchat.com')
                 for c in config['connection']['channels'].split('\n')]
 
         username = "%s@chat.hipchat.com" % (config['connection']['username'],)
+        # Set this here as JabberBot sets username as private
+        self._username = username
         super(HippyBot, self).__init__(username=username,
                                         password=config['connection']['password'])
 
-        for channel in self.channels:
+        for channel in self._channels:
             self.join_room(channel, config['connection']['nickname'])
 
         plugins = config.get('plugins', {}).get('load', [])
         if plugins:
             plugins = plugins.strip().split('\n')
-        self.plugin_modules = plugins
-        self.plugins = {}
+        self._plugin_modules = plugins
+        self._plugins = {}
 
         self.load_plugins()
 
-        self.mention_test = "@%s " % (config['connection']['nickname']
+        self._mention_test = "@%s " % (config['connection']['nickname']
                                         .split(' ')[0].lower(),)
 
     def callback_message(self, conn, mess):
@@ -59,18 +62,22 @@ class HippyBot(JabberBot):
             return
 
         direct_msg = False
-        if message.startswith(self.mention_test):
-            message = message[len(self.mention_test):]
+        if message.startswith(self._mention_test):
+            message = message[len(self._mention_test):]
             direct_msg = True
 
         cmd = message.split(' ')[0]
-        if cmd in self.command_aliases:
-            message = "%s%s" % (self.command_aliases[cmd], message[len(cmd):])
-            cmd = self.command_aliases[cmd]
+        if cmd in self._command_aliases:
+            message = "%s%s" % (self._command_aliases[cmd], message[len(cmd):])
+            cmd = self._command_aliases[cmd]
 
-        if direct_msg or cmd in self.global_commands:
+        ret = None
+        if direct_msg or cmd in self._global_commands:
             mess.setBody(message)
-            return super(HippyBot, self).callback_message(conn, mess)
+            ret = super(HippyBot, self).callback_message(conn, mess)
+        self._last_message = message
+        if ret:
+            return ret
 
     def join_room(self, room, username=None, password=None):
         """Overridden from JabberBot to provide history limiting.
@@ -92,12 +99,12 @@ class HippyBot(JabberBot):
 
     @botcmd
     def load_plugins(self, mess=None, args=None):
-        for path in self.plugin_modules:
+        for path in self._plugin_modules:
             name = path.split('.')[-1]
-            if name in self.plugins:
-                lazy_reload(self.plugins[name])
+            if name in self._plugins:
+                lazy_reload(self._plugins[name])
             module = do_import(path)
-            self.plugins[name] = module
+            self._plugins[name] = module
 
             # If the module has a function matching the module/command name,
             # then just use that
@@ -118,11 +125,11 @@ class HippyBot(JabberBot):
 
                 # Check for commands that don't need to be directed at
                 # hippybot, e.g. they can just be said in the channel
-                self.global_commands.extend(getattr(plugin,
+                self._global_commands.extend(getattr(plugin,
                                                 'global_commands', []))
                 # Check for "special commands", e.g. those that can be
                 # represented in a python method name
-                self.command_aliases.update(getattr(plugin,
+                self._command_aliases.update(getattr(plugin,
                                                 'command_aliases', {}))
             else:
                 funcs = [(name, command)]
