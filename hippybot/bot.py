@@ -168,7 +168,7 @@ def main():
 
     while True:
         config = ConfigParser()
-        config.read(options.config_path)
+        config.read(os.path.abspath(options.config_path))
         try:
             bot = HippyBot(config._sections)
             bot.serve_forever()
