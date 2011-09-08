@@ -18,6 +18,13 @@ def do_import(name):
     return mod
 
 class HippyBot(JabberBot):
+    """An XMPP/Jabber bot with specific customisations for working with the
+    hipchat.com chatroom/IM service.
+    """
+
+    global_commands = []
+    command_aliases = {}
+
     def __init__(self, config):
         self.config = config
 
@@ -51,17 +58,25 @@ class HippyBot(JabberBot):
         if not message:
             return
 
+        direct_msg = False
         if message.startswith(self.mention_test):
-            mess.setBody(message[len(self.mention_test):])
+            message = message[len(self.mention_test):]
+            direct_msg = True
+
+        cmd = message.split(' ')[0]
+        if cmd in self.command_aliases:
+            message = "%s%s" % (self.command_aliases[cmd], message[len(cmd):])
+            cmd = self.command_aliases[cmd]
+
+        if direct_msg or cmd in self.global_commands:
+            mess.setBody(message)
             return super(HippyBot, self).callback_message(conn, mess)
 
     def join_room(self, room, username=None, password=None):
         """Overridden from JabberBot to provide history limiting.
         """
-        # TODO fix namespacestrings and history settings
         NS_MUC = 'http://jabber.org/protocol/muc'
         if username is None:
-            # TODO use xmpppy function getNode
             username = self.__username.split('@')[0]
         my_room_JID = '/'.join((room, username))
         pres = xmpp.Presence(to=my_room_JID)
@@ -69,6 +84,7 @@ class HippyBot(JabberBot):
             pres.setTag('x',namespace=NS_MUC).setTagData('password',password)
         else:
             pres.setTag('x',namespace=NS_MUC)
+
         # Don't pull the history back from the server on joining channel
         pres.getTag('x').addChild('history', {'maxchars': '0',
                                                 'maxstanzas': '0'})
@@ -83,16 +99,31 @@ class HippyBot(JabberBot):
             module = do_import(path)
             self.plugins[name] = module
 
+            # If the module has a function matching the module/command name,
+            # then just use that
             command = getattr(module, name, None)
+
             if not command:
+                # Otherwise we're looking for a class called Plugin which
+                # provides methods decorated with the @botcmd decorator.
                 plugin = getattr(module, 'Plugin')()
                 plugin.bot = self
                 commands = [c for c in dir(plugin)]
                 funcs = []
+
                 for command in commands:
                     m = getattr(plugin, command)
                     if ismethod(m) and getattr(m, '_jabberbot_command', False):
                         funcs.append((command, m))
+
+                # Check for commands that don't need to be directed at
+                # hippybot, e.g. they can just be said in the channel
+                self.global_commands.extend(getattr(plugin,
+                                                'global_commands', []))
+                # Check for "special commands", e.g. those that can be
+                # represented in a python method name
+                self.command_aliases.update(getattr(plugin,
+                                                'command_aliases', {}))
             else:
                 funcs = [(name, command)]
 
