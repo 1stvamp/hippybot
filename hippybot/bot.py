@@ -64,7 +64,7 @@ class HippyBot(JabberBot):
         """Helper method to test if a message was sent from this bot.
         """
         if unicode(mess.getFrom()).endswith("/%s" % (
-                        self.bot._config['connection']['nickname'],)):
+                        self._config['connection']['nickname'],)):
             return True
         else:
             return False
