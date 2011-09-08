@@ -11,6 +11,9 @@ import logging
 logging.basicConfig()
 
 def do_import(name):
+    """Helper function to import a module given it's full path and return the
+    module object.
+    """
     mod = __import__(name)
     components = name.split('.')
     for comp in components[1:]:
@@ -57,7 +60,20 @@ class HippyBot(JabberBot):
         self._mention_test = "@%s " % (config['connection']['nickname']
                                         .split(' ')[0].lower(),)
 
+    def from_bot(self, mess):
+        """Helper method to test if a message was sent from this bot.
+        """
+        if unicode(mess.getFrom()).endswith("/%s" % (
+                        self.bot._config['connection']['nickname'],)):
+            return True
+        else:
+            return False
+
     def callback_message(self, conn, mess):
+        """Message handler, this is where we route messages and transform
+        direct messages and message aliases into the command that will be
+        matched by JabberBot.callback_message() to a registered command.
+        """
         message = mess.getBody().strip()
         if not message:
             return
@@ -100,6 +116,9 @@ class HippyBot(JabberBot):
 
     @botcmd
     def load_plugins(self, mess=None, args=None):
+        """Internal handler and bot command to dynamically load and reload
+        plugin classes based on the [plugins][load] section of the config.
+        """
         for path in self._plugin_modules:
             name = path.split('.')[-1]
             if name in self._plugins:
@@ -143,10 +162,17 @@ class HippyBot(JabberBot):
 
     @botcmd
     def restart(self, mess, args):
+        """Command to restart the bot, reloading the config file in the
+        process. Only works if the runner (see the main() function in this
+        module) calling HippyBot handles the RestartBot exception.
+        """
         self._restart = True
         self.quit()
 
     def shutdown(self):
+        """If called after the `restart` command raises the RestartBot
+        exception to trigger a re-init of the bot config and bot instance.
+        """
         if self._restart:
             raise RestartBot
 

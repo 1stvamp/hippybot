@@ -1,7 +1,8 @@
-from jabberbot import botcmd
+from hippybot.decorators import directcmd
 
 class Plugin(object):
-    @botcmd
+    """Plugin to return passed arguments rot13'ed, @'d to the originating user.
+    """
+    @directcmd
     def rot13(self, mess, args):
-        """Returns passed arguments rot13'ed"""
         return args.encode('rot13')

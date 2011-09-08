@@ -1,4 +1,4 @@
-from jabberbot import botcmd
+from hippybot.decorators import botcmd
 
 class Plugin(object):
     """HippyBot plugin to make the bot complete a mexican wave if 2 people in a
@@ -11,8 +11,7 @@ class Plugin(object):
     def mexican_wave(self, mess, args):
         if self.bot._last_message.strip() != 'mexican_wave':
             self.count = 0
-        if not unicode(mess.getFrom()).endswith("/%s" % (
-                            self.bot._config['connection']['nickname'],)):
+        if not self.bot.from_bot(mess):
             self.count += 1
             if self.count == 2:
                 self.count = 0
