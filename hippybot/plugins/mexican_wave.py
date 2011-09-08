@@ -6,13 +6,20 @@ class Plugin(object):
     """
     global_commands = ['mexican_wave']
     command_aliases = {r'\o/': 'mexican_wave'}
-    count = 0
+    counts = {}
     @botcmd
     def mexican_wave(self, mess, args):
+        channel = unicode(mess.getFrom()).split('/')[0]
+
+        if channel not in self.counts:
+            self.counts[channel] = 0
+
         if self.bot._last_message.strip() != 'mexican_wave':
-            self.count = 0
+            self.counts[channel] = 0
+
         if not self.bot.from_bot(mess):
-            self.count += 1
-            if self.count == 2:
-                self.count = 0
+            self.counts[channel] += 1
+
+            if self.counts[channel] == 2:
+                self.counts[channel] = 0
                 return r'\o/'
