@@ -1,0 +1,10 @@
+[connection]
+username = 12345_12345
+password = keepmesecret
+nickname = Hippy Bot
+channels = Hippy Bot's Room
+           test
+	   My Room
+[plugins]
+load = hippybot.plugins.rot13
+       hippybot.plugins.mexican_wave
