@@ -1,0 +1,9 @@
+ChangeLog for hippybot
+======================
+
+1.0.0 (2011-09-10)
+------------------
+
+ - Initial release
+ - Plugin API, include @-messages
+ - Dynamic reload of plugins and config
