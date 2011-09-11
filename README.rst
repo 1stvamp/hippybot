@@ -32,6 +32,8 @@ Run HippyBot from a terminal like so::
 
     hippybot -c path/to/your/config/file.conf
 
+Note: this won't daemonize the bot, to do this at present (although an inbuilt daemon mode **is on** the todo list) you'll need to backkground it either using the usual unix way (``hippybot -c configpath 2>&1 >> /var/logs/hippybot.log &``) or a daemonizer/event controller such as Canonical's ``upstart``. Another way is also to run the bot as normal within a ``screen`` session, if you do this I'd suggest using a util like ``tee`` to make sure a log file is still kept.
+
 You should see the bot join any channels listed in the config file. You can then target the bot with commands using the at-sign notation, e.g.::
 
     @botname rot13 hello world
