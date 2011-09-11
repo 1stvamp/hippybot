@@ -16,5 +16,8 @@ setup(
     url='http://github.com/1stvamp/hippybot',
     packages=find_packages(exclude=['ez_setup']),
     install_requires=open('requirements.txt').readlines(),
+    entry_points={
+        'console_scripts': ['hippybot = hippybot.bot:main',],
+    },
     license='BSD'
 )
