@@ -1,3 +1,5 @@
 jabberbot
 xmpppy
 lazy-reload
+requests
+simplejson
