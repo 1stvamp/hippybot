@@ -37,8 +37,9 @@ class HippyBot(JabberBot):
         self.PING_FREQUENCY = 60
 
         prefix = config['connection']['username'].split('_')[0]
-        self._channels = ["%s_%s@%s" % (prefix, c.strip(), 'conf.hipchat.com')
-                for c in config['connection']['channels'].split('\n')]
+        self._channels = ["%s_%s@%s" % (prefix, c.strip().lower().replace(' ',
+                '_'), 'conf.hipchat.com') for c in
+                config['connection']['channels'].split('\n')]
 
         username = "%s@chat.hipchat.com" % (config['connection']['username'],)
         # Set this here as JabberBot sets username as private
