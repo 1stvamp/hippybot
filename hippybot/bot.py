@@ -29,12 +29,11 @@ class HippyBot(JabberBot):
     _command_aliases = {}
     _last_message = ''
     _restart = False
+    # Make sure we don't timeout after 150s
+    PING_FREQUENCY = 60
 
     def __init__(self, config):
         self._config = config
-
-        # Make sure we don't timeout after 150s
-        self.PING_FREQUENCY = 60
 
         prefix = config['connection']['username'].split('_')[0]
         self._channels = ["%s_%s@%s" % (prefix, c.strip().lower().replace(' ',
