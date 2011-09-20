@@ -7,8 +7,16 @@ from optparse import OptionParser
 from inspect import ismethod
 from lazy_reload import lazy_reload
 
+from hippybot.hipchat import HipChatApi
+
 import logging
 logging.basicConfig()
+
+# List of bot commands that can't be registered, as they would conflict with
+# internal HippyBot methods
+RESERVED_COMMANDS = (
+    'api',
+)
 
 def do_import(name):
     """Helper function to import a module given it's full path and return the
@@ -57,7 +65,8 @@ class HippyBot(JabberBot):
 
         self.load_plugins()
 
-        self._mention_test = "@%s " % (config['connection']['nickname']
+        self._at_name = u"@%s " % (config['connection']['nickname'],)
+        self._at_short_name = u"@%s " % (config['connection']['nickname']
                                         .split(' ')[0].lower(),)
 
     def from_bot(self, mess):
@@ -69,6 +78,25 @@ class HippyBot(JabberBot):
         else:
             return False
 
+    def to_bot(self, mess):
+        """Helper method to test if a message was directed at this bot.
+        Returns a tuple of a flag set to True if the message was to the bot,
+        and the message strip without the "at" part.
+        """
+        respond_to_all = self._config.get('HipChat', {}).get(
+            'respond_to_all', False
+            )
+        to = True
+        if (respond_to_all and mess.startswith('@all ')):
+            mess = mess[5:]
+        elif mess.startswith(self._short_at_name):
+            mess = mess[len(self._short_at_name):]
+        elif mess.startswith(self._at_name):
+            mess = mess[len(self._at_name):]
+        else:
+            to = False
+        return to, mess
+
     def callback_message(self, conn, mess):
         """Message handler, this is where we route messages and transform
         direct messages and message aliases into the command that will be
@@ -78,18 +106,15 @@ class HippyBot(JabberBot):
         if not message:
             return
 
-        direct_msg = False
-        if message.startswith(self._mention_test):
-            message = message[len(self._mention_test):]
-            direct_msg = True
+        at_msg, message = self.to_bot(message)
 
         cmd = message.split(' ')[0]
         if cmd in self._command_aliases:
-            message = "%s%s" % (self._command_aliases[cmd], message[len(cmd):])
+            message = u"%s%s" % (self._command_aliases[cmd], message[len(cmd):])
             cmd = self._command_aliases[cmd]
 
         ret = None
-        if direct_msg or cmd in self._global_commands:
+        if at_msg or cmd in self._global_commands:
             mess.setBody(message)
             ret = super(HippyBot, self).callback_message(conn, mess)
         self._last_message = message
@@ -102,7 +127,7 @@ class HippyBot(JabberBot):
         NS_MUC = 'http://jabber.org/protocol/muc'
         if username is None:
             username = self._username.split('@')[0]
-        my_room_JID = '/'.join((room, username))
+        my_room_JID = u'/'.join((room, username))
         pres = xmpp.Presence(to=my_room_JID)
         if password is not None:
             pres.setTag('x',namespace=NS_MUC).setTagData('password',password)
@@ -141,6 +166,12 @@ class HippyBot(JabberBot):
                 for command in commands:
                     m = getattr(plugin, command)
                     if ismethod(m) and getattr(m, '_jabberbot_command', False):
+                        if command in RESERVED_COMMANDS:
+                            self.log.error('Plugin "%s" attempted to register '
+                                        'reserved command "%s", skipping..' % (
+                                            plugin, command
+                                        ))
+                            continue
                         funcs.append((command, m))
 
                 # Check for commands that don't need to be directed at
@@ -175,6 +206,19 @@ class HippyBot(JabberBot):
         """
         if self._restart:
             raise RestartBot
+
+    @property
+    def api(self):
+        """Accessor for lazy-loaded HipChatApi instance
+        """
+        if self._api is None:
+            auth_token = self._config.get('HipChat', {}).get(
+                'api_auth_token', None)
+            if auth_token is None:
+                self._api = False
+            else:
+                self._api = HipChatApi(auth_token=auth_token)
+        return self._api
 
 class RestartBot(Exception):
     """Interrupt to signal the bot should be restarted by it's runner
