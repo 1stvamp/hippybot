@@ -1,6 +1,14 @@
 ChangeLog for hippybot
 ======================
 
+1.1.0 (2011-0926)
+-----------------
+
+ - Added HipChat API wrapper for plugins to use
+ - MANIFEST.in added to fix for PyPi release installation, by Norman Richards <orb@nostacktrace.com>
+ - Added better room and nickname handling
+ - Added experimental "udefine" plugin for loading defintions off urbandictionary.com
+
 1.0.0 (2011-09-10)
 ------------------
 
