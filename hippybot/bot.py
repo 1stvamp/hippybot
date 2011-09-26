@@ -102,7 +102,7 @@ class HippyBot(JabberBot):
         direct messages and message aliases into the command that will be
         matched by JabberBot.callback_message() to a registered command.
         """
-        message = mess.getBody().strip()
+        message = str(mess.getBody()).strip()
         if not message:
             return
 
