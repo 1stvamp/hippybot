@@ -1,5 +1,7 @@
+import os
+_CWD = os.path.dirname(__file__)
 def get_version_string():
-    return open('./version.txt')
+    return open(os.path.join(_CWD, 'version.txt'), 'r').strip()
 
 def get_version():
     return get_version_string().split('.')
