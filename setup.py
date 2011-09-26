@@ -20,6 +20,8 @@ setup(
     url='http://github.com/1stvamp/hippybot',
     packages=find_packages(exclude=['ez_setup']),
     install_requires=open('requirements.txt').readlines(),
+    package_data={'hippybot': ['version.txt']},
+    include_package_data=True,
     extras_require={
         'plugins': open('extras_requirements.txt').readlines(),
     },

@@ -1,2 +1,2 @@
 include *.txt
-include hippybot/version.txt
+recursive-include hippybot *.txt
