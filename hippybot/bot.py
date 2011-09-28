@@ -65,7 +65,7 @@ class HippyBot(JabberBot):
 
         self.load_plugins()
 
-        self._at_name = u"@%s " % (config['connection']['nickname'],)
+        self._at_name = u'@"%s" ' % (config['connection']['nickname'],)
         self._at_short_name = u"@%s " % (config['connection']['nickname']
                                         .split(' ')[0].lower(),)
 
@@ -83,7 +83,7 @@ class HippyBot(JabberBot):
         Returns a tuple of a flag set to True if the message was to the bot,
         and the message strip without the "at" part.
         """
-        respond_to_all = self._config.get('HipChat', {}).get(
+        respond_to_all = self._config.get('hipchat', {}).get(
             'respond_to_all', False
             )
         to = True
@@ -212,7 +212,7 @@ class HippyBot(JabberBot):
         """Accessor for lazy-loaded HipChatApi instance
         """
         if self._api is None:
-            auth_token = self._config.get('HipChat', {}).get(
+            auth_token = self._config.get('hipchat', {}).get(
                 'api_auth_token', None)
             if auth_token is None:
                 self._api = False

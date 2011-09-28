@@ -8,3 +8,6 @@ channels = Hippy Bot's Room
 [plugins]
 load = hippybot.plugins.rot13
        hippybot.plugins.mexican_wave
+[hipchat]
+api_auth_token = xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+respond_to_all = true
