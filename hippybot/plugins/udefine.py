@@ -27,9 +27,9 @@ class Plugin(object):
                         definition = u''.join(Soup(definition).findAll(text=True))
                         definition = unicode(Soup(definition, convertEntities=Soup.HTML_ENTITIES))
                         results.append(definition)
-    if results:
-        reply = u"\n".join(results)
-        return reply
-    else:
-        return u'No matches found for "%s"' % (args,)
+        if results:
+            reply = u"\n".join(results)
+            return reply
+        else:
+            return u'No matches found for "%s"' % (args,)
 

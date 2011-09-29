@@ -89,8 +89,8 @@ class HippyBot(JabberBot):
         to = True
         if (respond_to_all and mess.startswith('@all ')):
             mess = mess[5:]
-        elif mess.startswith(self._short_at_name):
-            mess = mess[len(self._short_at_name):]
+        elif mess.startswith(self._at_short_name):
+            mess = mess[len(self._at_short_name):]
         elif mess.startswith(self._at_name):
             mess = mess[len(self._at_name):]
         else:
