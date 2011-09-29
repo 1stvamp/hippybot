@@ -1,7 +1,22 @@
 ChangeLog for hippybot
 ======================
 
-1.1.0 (2011-0926)
+1.1.3 (2011-09-29)
+-----------------
+
+ - Fixed udefine plugin to actually perform lookups
+
+1.1.2 (2011-09-29)
+-----------------
+
+ - Fixes for attribute errors in name handling
+
+1.1.1 (2011-09-26)
+-----------------
+
+ - Added missing setup metadata
+
+1.1.0 (2011-09-26)
 -----------------
 
  - Added HipChat API wrapper for plugins to use
