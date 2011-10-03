@@ -52,6 +52,7 @@ There are 2 plugins currently distributed with HippyBot:
 
  * ``rot13``: this is mostly included as an example, it ROT13s, any text spoken directly to the bot, back at the speaker.
  * ``mexican wave``: this is a fun plugin that completes a mexican wave if 2 people in a row say ``\o/`` in a channel, e.g.::
+ * ``udefine``: look up a term on `Urban Dictionary <http://urbandictionary.com/>`_, the first 3 definitions will be posted back to the channel. **Warning**: many terms are NSFW.
 
     John Smith: \o/
     Joe Bloggs: \o/
@@ -106,3 +107,30 @@ This uses 2 special properties:
 
  * ``global_commands``: a list of command *method names* that can be triggered without targetting the bot using at-sign notation (just say the command in the channel without mentioning the bot).
  * ``command_aliases``: dict of command aliases and the methods they map to, this is a way of triggering a command from a string that can't be used as a Python method name (e.g. using special symbols such as the "\o/" trigger used in the *mexican wave* plugin).
+
+HipChat API
+-----------
+
+HippyBot includes a very simple object orientated wrapper for the `HipChat API <https://www.hipchat.com/docs/api>`_. To make use of the API you need to `create an API key <https://www.hipchat.com/groups/api>`_ and enter that into the config file under the section ``hipchat``, as an option called ``api_auth_token``, e.g.:
+
+    [hipchat]
+    api_auth_token = xxxxxxxxxxxxxxxxxxxxxxxx
+
+Then you can access the wrapper via the ``api`` attribute on the bot instance, e.g. from within a command method on a plugin class:
+
+    # hello_world.py
+    from hippybot.decorators import botcmd
+
+    class Plugin(object):
+        global_commands = ['hello']
+
+        @botcmd
+        def hello(self, mess, args):
+            channel = unicode(mess.getFrom()).split('/')[0]
+            # Say hello world as a room notification
+            # Params to the API wrapper are sent as dicts
+            self.bot.api.rooms.message({
+                'room_id': channel,
+                'from': self.bot._config['connection']['nickname'],
+                'message': 'Hello world!'
+            })
