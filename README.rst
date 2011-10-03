@@ -111,12 +111,12 @@ This uses 2 special properties:
 HipChat API
 -----------
 
-HippyBot includes a very simple object orientated wrapper for the `HipChat API <https://www.hipchat.com/docs/api>`_. To make use of the API you need to `create an API key <https://www.hipchat.com/groups/api>`_ and enter that into the config file under the section ``hipchat``, as an option called ``api_auth_token``, e.g.:
+HippyBot includes a very simple object orientated wrapper for the `HipChat API <https://www.hipchat.com/docs/api>`_. To make use of the API you need to `create an API key <https://www.hipchat.com/groups/api>`_ and enter that into the config file under the section ``hipchat``, as an option called ``api_auth_token``, e.g.::
 
     [hipchat]
     api_auth_token = xxxxxxxxxxxxxxxxxxxxxxxx
 
-Then you can access the wrapper via the ``api`` attribute on the bot instance, e.g. from within a command method on a plugin class:
+Then you can access the wrapper via the ``api`` attribute on the bot instance, e.g. from within a command method on a plugin class::
 
     # hello_world.py
     from hippybot.decorators import botcmd
