@@ -59,16 +59,15 @@ There are 3 plugins currently distributed with HippyBot:
 
  * ``udefine``: look up a term on `Urban Dictionary <http://urbandictionary.com/>`_, the first 3 definitions will be posted back to the channel. **Warning**: many terms are NSFW.
 
-To instruct the bot to load a plugin include the plugin's module path in the load field of the plugins section of the config file, e.g. to load the ``rot13`` plugin which is located in the file ``rot13.py`` in ``hippybot/plugins/``, you would write it as::
+To instruct the bot to load a plugin include the plugin's module path in the load field of the plugins section of the config file, e.g. to load the ``mexican_wave`` plugin which is located in the file ``mexican_wave.py`` in ``hippybot/plugins/``, you would write it as::
 
     [plugins]
     load = hippybot.plugins.mexican_wave
-           hippybot.plugins.udefine
 
 To load a plugin named ``my_custom_plugin`` that you have installed into your python path under ``myhippybotplugins`` in a filename (or module) named ``my_custom_plugin.py`` you would append (on a new line, notice the indentation)::
 
     [plugins]
-    load = hippybot.plugins.rot13
+    load = hippybot.plugins.mexican_wave
            myhippybotplugins.my_custom_plugin
 
 Plugin API
