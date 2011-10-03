@@ -48,20 +48,22 @@ The bot has 2 inbuilt commands:
 Plugins
 =======
 
-There are 2 plugins currently distributed with HippyBot:
+There are 3 plugins currently distributed with HippyBot:
 
  * ``rot13``: this is mostly included as an example, it ROT13s, any text spoken directly to the bot, back at the speaker.
- * ``mexican wave``: this is a fun plugin that completes a mexican wave if 2 people in a row say ``\o/`` in a channel, e.g.::
- * ``udefine``: look up a term on `Urban Dictionary <http://urbandictionary.com/>`_, the first 3 definitions will be posted back to the channel. **Warning**: many terms are NSFW.
+ * ``mexican_wave``: this is a fun plugin that completes a mexican wave if 2 people in a row say ``\o/`` in a channel, e.g.::
 
     John Smith: \o/
     Joe Bloggs: \o/
     Hippy Bot:  \o/
 
+ * ``udefine``: look up a term on `Urban Dictionary <http://urbandictionary.com/>`_, the first 3 definitions will be posted back to the channel. **Warning**: many terms are NSFW.
+
 To instruct the bot to load a plugin include the plugin's module path in the load field of the plugins section of the config file, e.g. to load the ``rot13`` plugin which is located in the file ``rot13.py`` in ``hippybot/plugins/``, you would write it as::
 
     [plugins]
-    load = hippybot.plugins.rot13
+    load = hippybot.plugins.mexican_wave
+           hippybot.plugins.udefine
 
 To load a plugin named ``my_custom_plugin`` that you have installed into your python path under ``myhippybotplugins`` in a filename (or module) named ``my_custom_plugin.py`` you would append (on a new line, notice the indentation)::
 
