@@ -1,2 +1,5 @@
+include README.rst
+include LICENSE
+include CHANGELOG
 include *.txt
 recursive-include hippybot *.txt
