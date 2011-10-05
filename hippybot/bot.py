@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
+import codecs
 from jabberbot import botcmd, JabberBot, xmpp
 from ConfigParser import ConfigParser
 from optparse import OptionParser
@@ -44,11 +45,11 @@ class HippyBot(JabberBot):
         self._config = config
 
         prefix = config['connection']['username'].split('_')[0]
-        self._channels = ["%s_%s@%s" % (prefix, c.strip().lower().replace(' ',
+        self._channels = [u"%s_%s@%s" % (prefix, c.strip().lower().replace(' ',
                 '_'), 'conf.hipchat.com') for c in
                 config['connection']['channels'].split('\n')]
 
-        username = "%s@chat.hipchat.com" % (config['connection']['username'],)
+        username = u"%s@chat.hipchat.com" % (config['connection']['username'],)
         # Set this here as JabberBot sets username as private
         self._username = username
         super(HippyBot, self).__init__(username=username,
@@ -102,7 +103,7 @@ class HippyBot(JabberBot):
         direct messages and message aliases into the command that will be
         matched by JabberBot.callback_message() to a registered command.
         """
-        message = str(mess.getBody()).strip()
+        message = unicode(mess.getBody()).strip()
         if not message:
             return
 
@@ -238,7 +239,7 @@ def main():
 
     while True:
         config = ConfigParser()
-        config.read(os.path.abspath(options.config_path))
+        config.readfp(codecs.open(os.path.abspath(options.config_path), "r", "utf8"))
         try:
             bot = HippyBot(config._sections)
             bot.serve_forever()
