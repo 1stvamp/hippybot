@@ -4,6 +4,14 @@ ChangeLog for hippybot
 1.1.3 (2011-09-29)
 -----------------
 
+ - Fix for HipChat API wrapper instantiation sometimes hitting a super() object.
+ - Fixes for unicode handling in nicknames and chatrooms.
+ - Fix for meta data such as readme, licence, changelog not being included in PyPi egg builds.
+ - Added @wraps to directcmd decorator to preserve docs.
+
+1.1.3 (2011-09-29)
+-----------------
+
  - Fixed udefine plugin to actually perform lookups
 
 1.1.2 (2011-09-29)
