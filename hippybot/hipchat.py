@@ -22,23 +22,29 @@ POSTS = {
     )
 }
 
-BASE_URL = 'https://api.hipchat.com/v1'
+API_VERSION = '1'
+BASE_URL = 'https://api.hipchat.com/v%(version)s/%(section)s/%(method)s'
 
 class HipChatApi(object):
     """Lightweight Hipchat.com REST API wrapper
     """
     def __init__(self, auth_token, name=None, gets=GETS, posts=POSTS,
-                base_url=BASE_URL):
+                base_url=BASE_URL, api_version=API_VERSION):
         self._auth_token = auth_token
         self._name = name
         self._gets = gets
         self._posts = posts
         self._base_url = base_url
+        self._api_version = api_version
 
     def _request(self, method, params={}):
         if 'auth_token' not in params:
             params['auth_token'] = self._auth_token
-        url = "%s/%s/%s" % (self._base_url, self._name, method)
+        url = self._base_url % {
+            'version': self._api_version,
+            'section': self._name,
+            'method': method
+        }
         if method in self._gets[self._name]:
             r = requests.get(url, params=params)
         elif method in self._posts[self._name]:
@@ -47,7 +53,7 @@ class HipChatApi(object):
 
     def __getattr__(self, attr_name):
         if self._name is None:
-            return super(HipChatApi, self).__class__(
+            return super(HipChatApi, self).__self_class__(
                 auth_token=self._auth_token,
                 name=attr_name
             )
