@@ -9,9 +9,7 @@ from inspect import ismethod
 from lazy_reload import lazy_reload
 
 from hippybot.hipchat import HipChatApi
-
-import logging
-logging.basicConfig()
+from hippybot.daemon.daemon import Daemon
 
 # List of bot commands that can't be registered, as they would conflict with
 # internal HippyBot methods
@@ -192,22 +190,6 @@ class HippyBot(JabberBot):
         if mess:
             return 'Reloading plugin modules and classes..'
 
-    @botcmd
-    def restart(self, mess, args):
-        """Command to restart the bot, reloading the config file in the
-        process. Only works if the runner (see the main() function in this
-        module) calling HippyBot handles the RestartBot exception.
-        """
-        self._restart = True
-        self.quit()
-
-    def shutdown(self):
-        """If called after the `restart` command raises the RestartBot
-        exception to trigger a re-init of the bot config and bot instance.
-        """
-        if self._restart:
-            raise RestartBot
-
     @property
     def api(self):
         """Accessor for lazy-loaded HipChatApi instance
@@ -221,35 +203,53 @@ class HippyBot(JabberBot):
                 self._api = HipChatApi(auth_token=auth_token)
         return self._api
 
-class RestartBot(Exception):
-    """Interrupt to signal the bot should be restarted by it's runner
-    function/class.
-    """
-    pass
+class HippyDaemon(Daemon):
+    config = None
+    def run(self):
+        try:
+            bot = HippyBot(self.config._sections)
+            bot.serve_forever()
+        except Exception, e:
+            print >> sys.stderr, "ERROR: %s" % (e,)
+            return 1
+        else:
+            return 0
 
 def main():
+    import logging
+    logging.basicConfig()
+
     parser = OptionParser(usage="""usage: %prog [options]""")
 
     parser.add_option("-c", "--config", dest="config_path", help="Config file path")
+    parser.add_option("-d", "--daemon", dest="daemonise", help="Run as a"
+            " daemon process", action="store_true")
+    parser.add_option("-p", "--pid", dest="pid", help="PID file location if"
+            " running with --daemon")
     (options, pos_args) = parser.parse_args()
 
     if not options.config_path:
         print >> sys.stderr, 'ERROR: Missing config file path'
         return 1
 
-    while True:
-        config = ConfigParser()
-        config.readfp(codecs.open(os.path.abspath(options.config_path), "r", "utf8"))
-        try:
-            bot = HippyBot(config._sections)
-            bot.serve_forever()
-        except RestartBot:
-            continue
-        except IndexError, e:
-            print >> sys.stderr, "ERROR: %s" % (e,)
-            return 1
-        else:
+    config = ConfigParser()
+    config.readfp(codecs.open(os.path.abspath(options.config_path), "r", "utf8"))
+
+    pid = options.pid
+    if not pid:
+        pid = os.path.abspath(os.path.join(os.path.dirname(
+            options.config_path), 'hippybot.pid'))
+
+    runner = HippyDaemon(pid)
+    runner.config = config
+    if options.daemonise:
+        ret = runner.start()
+        if ret is None:
             return 0
+        else:
+            return ret
+    else:
+        return runner.run()
 
 if __name__ == '__main__':
     sys.exit(main())
