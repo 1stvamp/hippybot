@@ -3,4 +3,4 @@ include LICENSE
 include CHANGELOG
 include *.txt
 recursive-include hippybot *.txt
-include hippybot/daemon/src/daemon.py
+graft hippybot/daemon/src
