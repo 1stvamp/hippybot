@@ -14,6 +14,7 @@ except ImportError:
 setup(
     name='hippybot',
     description='Python Hipchat bot',
+    long_description=open('README.rst').read(),
     version=__version__,
     author='Wes Mason',
     author_email='wes[at]1stvamp[dot]org',
