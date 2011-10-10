@@ -1,7 +1,13 @@
 ChangeLog for hippybot
 ======================
 
-1.1.3 (2011-09-29)
+1.1.5 (2011-10-10)
+------------------
+
+ - Added -d/--daemon mode to runner, daemonizes hippybot to run in system background.
+ - Added -p/--pid option to set location of PID file when in --daemon mode.
+
+1.1.4 (2011-09-29)
 -----------------
 
  - Fix for HipChat API wrapper instantiation sometimes hitting a super() object.
