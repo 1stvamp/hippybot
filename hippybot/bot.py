@@ -190,6 +190,7 @@ class HippyBot(JabberBot):
         if mess:
             return 'Reloading plugin modules and classes..'
 
+    _api = None
     @property
     def api(self):
         """Accessor for lazy-loaded HipChatApi instance
