@@ -2,6 +2,7 @@
 import os
 import sys
 import codecs
+import time
 from jabberbot import botcmd, JabberBot, xmpp
 from ConfigParser import ConfigParser
 from optparse import OptionParser
@@ -36,8 +37,6 @@ class HippyBot(JabberBot):
     _command_aliases = {}
     _last_message = ''
     _restart = False
-    # Make sure we don't timeout after 150s
-    PING_FREQUENCY = 60
 
     def __init__(self, config):
         self._config = config
@@ -52,6 +51,8 @@ class HippyBot(JabberBot):
         self._username = username
         super(HippyBot, self).__init__(username=username,
                                         password=config['connection']['password'])
+        # Make sure we don't timeout after 150s
+        self.PING_FREQUENCY = 50
 
         for channel in self._channels:
             self.join_room(channel, config['connection']['nickname'])
@@ -137,6 +138,30 @@ class HippyBot(JabberBot):
         pres.getTag('x').addChild('history', {'maxchars': '0',
                                                 'maxstanzas': '0'})
         self.connect().send(pres)
+
+    def _idle_ping(self):
+        """Pings the server, calls on_ping_timeout() on no response.
+
+        To enable set self.PING_FREQUENCY to a value higher than zero.
+
+        Overridden from jabberbot in order to send a single space message
+        to HipChat, as XMPP ping doesn't seem to cut it.
+        """
+        if self.PING_FREQUENCY \
+            and time.time() - self._JabberBot__lastping > self.PING_FREQUENCY:
+            self._JabberBot__lastping = time.time()
+            mess = self.build_message(' ')
+            self.send_message(mess)
+            ping = xmpp.Protocol('iq', typ='get', \
+                payload=[xmpp.Node('ping', attrs={'xmlns':'urn:xmpp:ping'})])
+            try:
+                res = self.conn.SendAndWaitForResponse(ping, self.PING_TIMEOUT)
+                if res is None:
+                    self.on_ping_timeout()
+            except IOError, e:
+                logging.error('Error pinging the server: %s, '\
+                    'treating as ping timeout.' % e)
+                self.on_ping_timeout()
 
     @botcmd
     def load_plugins(self, mess=None, args=None):
