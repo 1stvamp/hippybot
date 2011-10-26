@@ -1,6 +1,12 @@
 ChangeLog for hippybot
 ======================
 
+1.2.1 (2011-10-26)
+------------------
+
+ - Fixed XMPP pings in JabberBot being ineffective, by sending a blank char instead.
+ - Added daemon instructions to readme.
+
 1.2.0 (2011-10-20)
 ------------------
 
