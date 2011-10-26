@@ -152,16 +152,6 @@ class HippyBot(JabberBot):
             self._JabberBot__lastping = time.time()
             mess = self.build_message(' ')
             self.send_message(mess)
-            ping = xmpp.Protocol('iq', typ='get', \
-                payload=[xmpp.Node('ping', attrs={'xmlns':'urn:xmpp:ping'})])
-            try:
-                res = self.conn.SendAndWaitForResponse(ping, self.PING_TIMEOUT)
-                if res is None:
-                    self.on_ping_timeout()
-            except IOError, e:
-                logging.error('Error pinging the server: %s, '\
-                    'treating as ping timeout.' % e)
-                self.on_ping_timeout()
 
     @botcmd
     def load_plugins(self, mess=None, args=None):
