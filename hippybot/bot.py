@@ -150,8 +150,7 @@ class HippyBot(JabberBot):
         if self.PING_FREQUENCY \
             and time.time() - self._JabberBot__lastping > self.PING_FREQUENCY:
             self._JabberBot__lastping = time.time()
-            mess = self.build_message(' ')
-            self.send_message(mess)
+            self.send_message(' ')
 
     @botcmd
     def load_plugins(self, mess=None, args=None):
