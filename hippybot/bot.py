@@ -36,6 +36,7 @@ class HippyBot(JabberBot):
     _global_commands = []
     _command_aliases = {}
     _last_message = ''
+    _last_send_time = time.time()
     _restart = False
 
     def __init__(self, config):
@@ -97,6 +98,13 @@ class HippyBot(JabberBot):
             to = False
         return to, mess
 
+    def send_message(self, mess):
+        """Send an XMPP message
+        Overridden from jabberbot to update _last_send_time
+        """
+        self._last_send_time = time.time()
+        self.connect().send(mess)
+
     def callback_message(self, conn, mess):
         """Message handler, this is where we route messages and transform
         direct messages and message aliases into the command that will be
@@ -148,8 +156,8 @@ class HippyBot(JabberBot):
         to HipChat, as XMPP ping doesn't seem to cut it.
         """
         if self.PING_FREQUENCY \
-            and time.time() - self._JabberBot__lastping > self.PING_FREQUENCY:
-            self._JabberBot__lastping = time.time()
+            and time.time() - self._last_send_time > self.PING_FREQUENCY:
+            self._last_send_time = time.time()
             self.send_message(' ')
 
     @botcmd
