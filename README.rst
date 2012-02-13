@@ -113,6 +113,7 @@ This uses 2 special properties:
 
  * ``global_commands``: a list of command *method names* that can be triggered without targetting the bot using at-sign notation (just say the command in the channel without mentioning the bot).
  * ``command_aliases``: dict of command aliases and the methods they map to, this is a way of triggering a command from a string that can't be used as a Python method name (e.g. using special symbols such as the "\o/" trigger used in the *mexican wave* plugin).
+ * ``all_msg_handlers``: a list of handler *method names* that will be passed all incoming XMPP message objects regardless of type as. This can be used for low-level hanbdling of Jabber messages without using the higher level message handling of jabberbot or hippybot.
 
 HipChat API
 -----------

@@ -1,6 +1,13 @@
 ChangeLog for hippybot
 ======================
 
+1.2.2 (2012-02-13)
+------------------
+
+ - Replace symlinked daemon module for use with build scripts that can't use symlinks (hat tip: Steven Kryskalla <steve@lolapps.com>).
+ - Override jabberbot's _last_send_time overcome ping timeouts on HipChat (hat tip: Paul Thomas <paul.thomas@hp.com>).
+ - Added new plugin flag to capture all message types.
+
 1.2.1 (2011-10-26)
 ------------------
 

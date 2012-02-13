@@ -35,6 +35,7 @@ class HippyBot(JabberBot):
 
     _global_commands = []
     _command_aliases = {}
+    _all_msg_handlers = []
     _last_message = ''
     _last_send_time = time.time()
     _restart = False
@@ -116,9 +117,25 @@ class HippyBot(JabberBot):
 
         at_msg, message = self.to_bot(message)
 
-        cmd = message.split(' ')[0]
+        if len(self._all_msg_handlers) > 0:
+            for handler in self._all_msg_handlers:
+                try:
+                    handler(mess)
+                except Exception, e:
+                    self.log.exception(
+                            'An error happened while processing '
+                            'a message ("%s") from %s: %s"' %
+                            (mess.getType(), mess.getFrom(),
+                                traceback.format_exc(e)))
+
+        if u' ' in message:
+            cmd = message.split(u' ')[0]
+        else:
+            cmd = ''
+
         if cmd in self._command_aliases:
-            message = u"%s%s" % (self._command_aliases[cmd], message[len(cmd):])
+            message = u"%s%s" % (self._command_aliases[cmd],
+                                message[len(cmd):])
             cmd = self._command_aliases[cmd]
 
         ret = None
@@ -203,6 +220,11 @@ class HippyBot(JabberBot):
                 # represented in a python method name
                 self._command_aliases.update(getattr(plugin,
                                                 'command_aliases', {}))
+
+                # Check for handlers for all XMPP message types,
+                # this can be used for low-level checking of XMPP messages
+                self._all_msg_handlers.extend(getattr(plugin,
+                                                'all_msg_handlers', []))
             else:
                 funcs = [(name, command)]
 
