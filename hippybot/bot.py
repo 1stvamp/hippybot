@@ -199,7 +199,7 @@ class HippyBot(JabberBot):
                 # hippybot, e.g. they can just be said in the channel
                 self._global_commands.extend(getattr(plugin,
                                                 'global_commands', []))
-                # Check for "special commands", e.g. those that can be
+                # Check for "special commands", e.g. those that can't be
                 # represented in a python method name
                 self._command_aliases.update(getattr(plugin,
                                                 'command_aliases', {}))
