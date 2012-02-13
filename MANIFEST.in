@@ -3,4 +3,3 @@ include LICENSE
 include CHANGELOG
 include *.txt
 recursive-include hippybot *.txt
-recursive-exclude hippybot/daemon/src/.git *
