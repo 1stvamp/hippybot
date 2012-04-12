@@ -1,2 +1,3 @@
 hippybot.conf
 hippybot.pid
+*.pyc
