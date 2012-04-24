@@ -3,6 +3,7 @@ import os
 import sys
 import codecs
 import time
+import traceback
 from jabberbot import botcmd, JabberBot, xmpp
 from ConfigParser import ConfigParser
 from optparse import OptionParser
@@ -256,6 +257,7 @@ class HippyDaemon(Daemon):
             bot.serve_forever()
         except Exception, e:
             print >> sys.stderr, "ERROR: %s" % (e,)
+            print >> sys.stderr, traceback.format_exc()
             return 1
         else:
             return 0
