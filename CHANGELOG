@@ -1,6 +1,11 @@
 ChangeLog for hippybot
 ======================
 
+1.2.3 (2012-04-24)
+------------------
+
+ - Made jabberbot >= 0.15 the minimum requirement to ensure ping timeout issue fix in upstream.
+
 1.2.2 (2012-02-13)
 ------------------
 
