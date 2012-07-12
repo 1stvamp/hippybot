@@ -16,9 +16,9 @@ Download and install with ``setup.py``::
 
 Install from PyPi::
 
-    easyy_install hippybot
-    # or using pip
     pip install hippybot
+    # or using setuptools
+    easy_install hippybot
 
 Configuration
 =============
