@@ -68,7 +68,7 @@ class HippyBot(JabberBot):
 
         self.load_plugins()
 
-        self._at_name = u'@"%s" ' % (config['connection']['nickname'],)
+        self._at_name = u"@%s " % (config['connection']['nickname'].replace(" ",""),)
         self._at_short_name = u"@%s " % (config['connection']['nickname']
                                         .split(' ')[0].lower(),)
 
