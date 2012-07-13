@@ -1,6 +1,12 @@
 ChangeLog for hippybot
 ======================
 
+1.2.4 (2012-07-13)
+------------------
+
+ - At-reply fixes to conform to HipChat's new @<firstname><lastname> rules (hat tip: James Sullivan <jsullivan@cambridgecloudpartners.com>).
+ - Minor readme edit to fix typo and make `pip` the recommended method for installation from PyPi.
+
 1.2.3 (2012-04-24)
 ------------------
 
