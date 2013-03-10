@@ -96,7 +96,7 @@ class HippyBot(JabberBot):
             mess = mess[5:]
         elif mess.startswith(self._at_short_name):
             mess = mess[len(self._at_short_name):]
-        elif mess.startswith(self._at_name):
+        elif mess.lower().startswith(self._at_name.lower()):
             mess = mess[len(self._at_name):]
         else:
             to = False
