@@ -4,6 +4,7 @@ import sys
 import codecs
 import time
 import traceback
+import logging
 from jabberbot import botcmd, JabberBot, xmpp
 from ConfigParser import ConfigParser
 from optparse import OptionParser
@@ -73,6 +74,7 @@ class HippyBot(JabberBot):
 
         self.load_plugins()
 
+        self.log.setLevel(logging.INFO)
 
     def from_bot(self, mess):
         """Helper method to test if a message was sent from this bot.
