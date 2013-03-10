@@ -217,7 +217,8 @@ class HippyBot(JabberBot):
                                         ))
                             continue
                         self.rewrite_docstring(m)
-                        funcs.append((command, m))
+                        name = getattr(m, '_jabberbot_command_name', False)
+                        funcs.append((name, m))
 
                 # Check for commands that don't need to be directed at
                 # hippybot, e.g. they can just be said in the channel
