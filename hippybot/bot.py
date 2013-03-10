@@ -60,6 +60,10 @@ class HippyBot(JabberBot):
         for channel in self._channels:
             self.join_room(channel, config['connection']['nickname'])
 
+        self._at_name = u"@%s " % (config['connection']['nickname'].replace(" ",""),)
+        self._at_short_name = u"@%s " % (config['connection']['nickname']
+                                        .split(' ')[0].lower(),)
+
         plugins = config.get('plugins', {}).get('load', [])
         if plugins:
             plugins = plugins.strip().split('\n')
@@ -68,9 +72,6 @@ class HippyBot(JabberBot):
 
         self.load_plugins()
 
-        self._at_name = u"@%s " % (config['connection']['nickname'].replace(" ",""),)
-        self._at_short_name = u"@%s " % (config['connection']['nickname']
-                                        .split(' ')[0].lower(),)
 
     def from_bot(self, mess):
         """Helper method to test if a message was sent from this bot.
@@ -178,6 +179,10 @@ class HippyBot(JabberBot):
             self._last_send_time = time.time()
             self.send_message(' ')
 
+    def rewrite_docstring(self, m):
+        if m.__doc__ and m.__doc__.find("@NickName") > -1:
+            m.__func__.__doc__ = m.__doc__.replace("@NickName", self._at_name)
+
     @botcmd
     def load_plugins(self, mess=None, args=None):
         """Internal handler and bot command to dynamically load and reload
@@ -211,6 +216,7 @@ class HippyBot(JabberBot):
                                             plugin, command
                                         ))
                             continue
+                        self.rewrite_docstring(m)
                         funcs.append((command, m))
 
                 # Check for commands that don't need to be directed at

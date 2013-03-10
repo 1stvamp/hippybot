@@ -5,4 +5,8 @@ class Plugin(object):
     """
     @directcmd
     def rot13(self, mess, args):
+        """
+        ROT13 the message
+        Format: @NickName rot13 <message>
+        """
         return args.encode('rot13')
