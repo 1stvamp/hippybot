@@ -135,7 +135,7 @@ class HippyBot(JabberBot):
         if u' ' in message:
             cmd = message.split(u' ')[0]
         else:
-            cmd = ''
+            cmd = message
 
         if cmd in self._command_aliases:
             message = u"%s%s" % (self._command_aliases[cmd],
