@@ -16,6 +16,7 @@ class Plugin(object):
 
         if self.bot._last_message.strip() != 'mexican_wave':
             self.counts[channel] = 0
+        self.bot.log.info("\o/ %s" %self.counts[channel])
 
         if not self.bot.from_bot(mess):
             self.counts[channel] += 1

@@ -114,6 +114,7 @@ class HippyBot(JabberBot):
         direct messages and message aliases into the command that will be
         matched by JabberBot.callback_message() to a registered command.
         """
+        self.log.debug("Message: %s" % mess)
         message = unicode(mess.getBody()).strip()
         if not message:
             return
@@ -226,6 +227,7 @@ class HippyBot(JabberBot):
                             continue
                         self.rewrite_docstring(m)
                         name = getattr(m, '_jabberbot_command_name', False)
+                        self.log.info("command loaded: %s" % name)
                         funcs.append((name, m))
 
                     if ismethod(m) and getattr(m, '_jabberbot_content_command', False):
@@ -237,6 +239,7 @@ class HippyBot(JabberBot):
                             continue
                         self.rewrite_docstring(m)
                         name = getattr(m, '_jabberbot_command_name', False)
+                        self.log.info("command loaded: %s" % name)
                         content_funcs.append((name, m))
 
                 # Check for commands that don't need to be directed at

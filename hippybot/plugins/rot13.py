@@ -9,4 +9,5 @@ class Plugin(object):
         ROT13 the message
         Format: @NickName rot13 <message>
         """
+        self.bot.log.info("rot13: %s" % mess)
         return args.encode('rot13')
