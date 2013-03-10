@@ -190,7 +190,7 @@ class HippyBot(JabberBot):
         if m.__doc__ and m.__doc__.find("@NickName") > -1:
             m.__func__.__doc__ = m.__doc__.replace("@NickName", self._at_name)
 
-    @botcmd
+    @botcmd(hidden=True)
     def load_plugins(self, mess=None, args=None):
         """Internal handler and bot command to dynamically load and reload
         plugin classes based on the [plugins][load] section of the config.
