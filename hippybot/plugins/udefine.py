@@ -17,6 +17,11 @@ class Plugin(object):
 
     @directcmd
     def udefine(self, mess, args):
+        """
+        Returns the Urban Dictionary definition of the passed in word
+        Format: @NickName udefine <word>
+        """
+        self.bot.log.info("udefine: %s" % mess)
         term = args.strip()
         req = requests.get(UD_SEARCH_URI, params={'term': term})
         data = req.content

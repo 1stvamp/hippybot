@@ -4,6 +4,7 @@ import sys
 import codecs
 import time
 import traceback
+import logging
 from jabberbot import botcmd, JabberBot, xmpp
 from ConfigParser import ConfigParser
 from optparse import OptionParser
@@ -34,6 +35,7 @@ class HippyBot(JabberBot):
     hipchat.com chatroom/IM service.
     """
 
+    _content_commands = {}
     _global_commands = []
     _command_aliases = {}
     _all_msg_handlers = []
@@ -60,6 +62,10 @@ class HippyBot(JabberBot):
         for channel in self._channels:
             self.join_room(channel, config['connection']['nickname'])
 
+        self._at_name = u"@%s " % (config['connection']['nickname'].replace(" ",""),)
+        self._at_short_name = u"@%s " % (config['connection']['nickname']
+                                        .split(' ')[0].lower(),)
+
         plugins = config.get('plugins', {}).get('load', [])
         if plugins:
             plugins = plugins.strip().split('\n')
@@ -68,9 +74,7 @@ class HippyBot(JabberBot):
 
         self.load_plugins()
 
-        self._at_name = u"@%s " % (config['connection']['nickname'].replace(" ",""),)
-        self._at_short_name = u"@%s " % (config['connection']['nickname']
-                                        .split(' ')[0].lower(),)
+        self.log.setLevel(logging.INFO)
 
     def from_bot(self, mess):
         """Helper method to test if a message was sent from this bot.
@@ -94,7 +98,7 @@ class HippyBot(JabberBot):
             mess = mess[5:]
         elif mess.startswith(self._at_short_name):
             mess = mess[len(self._at_short_name):]
-        elif mess.startswith(self._at_name):
+        elif mess.lower().startswith(self._at_name.lower()):
             mess = mess[len(self._at_name):]
         else:
             to = False
@@ -112,6 +116,7 @@ class HippyBot(JabberBot):
         direct messages and message aliases into the command that will be
         matched by JabberBot.callback_message() to a registered command.
         """
+        self.log.debug("Message: %s" % mess)
         message = unicode(mess.getBody()).strip()
         if not message:
             return
@@ -132,7 +137,7 @@ class HippyBot(JabberBot):
         if u' ' in message:
             cmd = message.split(u' ')[0]
         else:
-            cmd = ''
+            cmd = message
 
         if cmd in self._command_aliases:
             message = u"%s%s" % (self._command_aliases[cmd],
@@ -146,6 +151,12 @@ class HippyBot(JabberBot):
         self._last_message = message
         if ret:
             return ret
+        for name in self._content_commands:
+            cmd = self._content_commands[name]
+            ret = cmd(mess)
+            if ret:
+                self.send_simple_reply(mess, ret)
+                return ret
 
     def join_room(self, room, username=None, password=None):
         """Overridden from JabberBot to provide history limiting.
@@ -178,7 +189,11 @@ class HippyBot(JabberBot):
             self._last_send_time = time.time()
             self.send_message(' ')
 
-    @botcmd
+    def rewrite_docstring(self, m):
+        if m.__doc__ and m.__doc__.find("@NickName") > -1:
+            m.__func__.__doc__ = m.__doc__.replace("@NickName", self._at_name)
+
+    @botcmd(hidden=True)
     def load_plugins(self, mess=None, args=None):
         """Internal handler and bot command to dynamically load and reload
         plugin classes based on the [plugins][load] section of the config.
@@ -201,6 +216,7 @@ class HippyBot(JabberBot):
                 plugin.bot = self
                 commands = [c for c in dir(plugin)]
                 funcs = []
+                content_funcs = []
 
                 for command in commands:
                     m = getattr(plugin, command)
@@ -211,7 +227,22 @@ class HippyBot(JabberBot):
                                             plugin, command
                                         ))
                             continue
-                        funcs.append((command, m))
+                        self.rewrite_docstring(m)
+                        name = getattr(m, '_jabberbot_command_name', False)
+                        self.log.info("command loaded: %s" % name)
+                        funcs.append((name, m))
+
+                    if ismethod(m) and getattr(m, '_jabberbot_content_command', False):
+                        if command in RESERVED_COMMANDS:
+                            self.log.error('Plugin "%s" attempted to register '
+                                        'reserved command "%s", skipping..' % (
+                                            plugin, command
+                                        ))
+                            continue
+                        self.rewrite_docstring(m)
+                        name = getattr(m, '_jabberbot_command_name', False)
+                        self.log.info("command loaded: %s" % name)
+                        content_funcs.append((name, m))
 
                 # Check for commands that don't need to be directed at
                 # hippybot, e.g. they can just be said in the channel
@@ -232,6 +263,9 @@ class HippyBot(JabberBot):
             for command, func in funcs:
                 setattr(self, command, func)
                 self.commands[command] = func
+            for command, func in content_funcs:
+                setattr(self, command, func)
+                self._content_commands[command] = func
         if mess:
             return 'Reloading plugin modules and classes..'
 
