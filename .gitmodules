@@ -1,3 +1,0 @@
-[submodule "hippybot/daemon/src"]
-	path = hippybot/daemon/src
-	url = https://github.com/serverdensity/python-daemon.git
