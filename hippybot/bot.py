@@ -52,7 +52,7 @@ class HippyBot(JabberBot):
         for channel in config['connection']['channels'].split('\n'):
             # Only generate an XMPP room name from HipChat name if required
             if 'conf.hipchat.com' not in channel:
-                channel = u"%s_%s@%s" % (prefix, c.strip().lower().replace(' ',
+                channel = u"%s_%s@%s" % (prefix, channel.strip().lower().replace(' ',
                                          '_'), 'conf.hipchat.com')
             self._channels.append(channel)
 
