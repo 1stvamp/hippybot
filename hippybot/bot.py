@@ -47,9 +47,14 @@ class HippyBot(JabberBot):
         self._config = config
 
         prefix = config['connection']['username'].split('_')[0]
-        self._channels = [u"%s_%s@%s" % (prefix, c.strip().lower().replace(' ',
-                '_'), 'conf.hipchat.com') for c in
-                config['connection']['channels'].split('\n')]
+        
+        self._channels = []
+        for channel in config['connection']['channels'].split('\n'):
+            # Only generate an XMPP room name from HipChat name if required
+            if 'conf.hipchat.com' not in channel:
+                channel = u"%s_%s@%s" % (prefix, c.strip().lower().replace(' ',
+                                         '_'), 'conf.hipchat.com')
+            self._channels.append(channel)
 
         username = u"%s@chat.hipchat.com" % (config['connection']['username'],)
         # Set this here as JabberBot sets username as private
