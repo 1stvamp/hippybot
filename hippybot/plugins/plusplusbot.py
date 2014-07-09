@@ -29,8 +29,8 @@ class Plugin(object):
 	def change_score(self, mess, **kwargs):
 		message = mess.getBody()
 		if message:
-			room = str(mess.getFrom()).split("/")[0]
-			user = str(mess.getFrom()).split("/")[1]
+			room = unicode(mess.getFrom()).split("/")[0]
+			user = unicode(mess.getFrom()).split("/")[1]
 			results = []
 			if message.find('++') > -1 or message.find('--') > -1:
 				self.bot.log.info("plusplusbot: %s" % mess)
@@ -65,7 +65,7 @@ class Plugin(object):
 		Format: @NickName scores
 		"""
 		self.bot.log.info("score: %s" % mess)
-		room = str(mess.getFrom()).split("/")[0]
+		room = unicode(mess.getFrom()).split("/")[0]
 		ret = []
 		with self.rlock:
 			scores = self.db.get(room, {})
