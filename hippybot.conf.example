@@ -5,9 +5,16 @@ nickname = Hippy Bot
 channels = Hippy Bot's Room
            test
            My Room
+# a list of plugins that should be loaded from a list of directories.
 [plugins]
-load = hippybot.plugins.rot13
-       hippybot.plugins.mexican_wave
+load = rot13
+       mexican_wave
+
+load_path = /absolute/path/plugins
+	hippybot/plugins
+	plugins
+	another/relative/path
+
 [hipchat]
 api_auth_token = xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 respond_to_all = true

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
+import imp
 import codecs
 import time
 import traceback
@@ -20,15 +21,6 @@ RESERVED_COMMANDS = (
     'api',
 )
 
-def do_import(name):
-    """Helper function to import a module given it's full path and return the
-    module object.
-    """
-    mod = __import__(name)
-    components = name.split('.')
-    for comp in components[1:]:
-        mod = getattr(mod, comp)
-    return mod
 
 class HippyBot(JabberBot):
     """An XMPP/Jabber bot with specific customisations for working with the
@@ -76,6 +68,15 @@ class HippyBot(JabberBot):
             plugins = plugins.strip().split('\n')
         self._plugin_modules = plugins
         self._plugins = {}
+        load_path = config.get('plugins', {}).get('load_path', [])
+        if load_path:
+            load_path = load_path.strip().split('\n')
+            self._load_path = []
+            for path in load_path:
+                if path[0:1] != '/':      # this is not an absolute path
+                    self._load_path.append('%s/%s' % (os.getcwd(), path))
+                else:
+                    self._load_path.append(path)
 
         self.load_plugins()
 
@@ -201,13 +202,16 @@ class HippyBot(JabberBot):
     @botcmd(hidden=True)
     def load_plugins(self, mess=None, args=None):
         """Internal handler and bot command to dynamically load and reload
-        plugin classes based on the [plugins][load] section of the config.
+        plugin classes based on the [plugins][load] section of the config and
+        with respect of [plugins][load_path] option.
         """
         for path in self._plugin_modules:
             name = path.split('.')[-1]
             if name in self._plugins:
                 lazy_reload(self._plugins[name])
-            module = do_import(path)
+            (file, filename, data) = imp.find_module(name, self._load_path)
+            if file:
+                module = imp.load_module(name, file, filename, data)
             self._plugins[name] = module
 
             # If the module has a function matching the module/command name,
