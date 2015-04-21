@@ -75,6 +75,16 @@ To load a plugin named ``my_custom_plugin`` that you have installed into your py
     load = hippybot.plugins.mexican_wave
            myhippybotplugins.my_custom_plugin
 
+To search for plugins in paths outside of hippybot, you can use the `load_path` option::
+
+    [plugins]
+    
+    load_path = /absolute/path/plugins
+    	hippybot/plugins
+    	plugins
+    	another/relative/path
+
+
 Plugin API
 ==========
 
