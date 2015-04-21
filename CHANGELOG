@@ -1,6 +1,12 @@
 ChangeLog for hippybot
 ======================
 
+1.2.5 (2015-04-21)
+------------------
+
+ - `load_path` config option added to allow loading from paths outside of hippybot's source path,
+    hat tip: Claudio Mignanti (https://github.com/claudyus).
+
 1.2.4 (2012-07-13)
 ------------------
 
