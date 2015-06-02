@@ -43,12 +43,13 @@ class HippyBot(JabberBot):
         self._channels = []
         for channel in config['connection']['channels'].split('\n'):
             # Only generate an XMPP room name from HipChat name if required
-            if 'conf.hipchat.com' not in channel:
+            if config['connection'].get('muc_domain', 'conf.hipchat.com') not in channel:
                 channel = u"%s_%s@%s" % (prefix, channel.strip().lower().replace(' ',
-                                         '_'), 'conf.hipchat.com')
+                                         '_'), config['connection'].get('muc_domain', 'conf.hipchat.com'))
             self._channels.append(channel)
 
-        username = u"%s@chat.hipchat.com" % (config['connection']['username'],)
+        username = u"%s@%s" % (config['connection']['username'],
+                               config['connection'].get('host', 'chat.hipchat.com'))
         # Set this here as JabberBot sets username as private
         self._username = username
         super(HippyBot, self).__init__(username=username,
@@ -286,10 +287,12 @@ class HippyBot(JabberBot):
         if self._api is None:
             auth_token = self._config.get('hipchat', {}).get(
                 'api_auth_token', None)
+            api_server = self._config.get('hipchat', {}).get(
+                'api_server', 'api.hipchat.com')
             if auth_token is None:
                 self._api = False
             else:
-                self._api = HipChatApi(auth_token=auth_token)
+                self._api = HipChatApi(auth_token=auth_token, api_server=api_server)
         return self._api
 
 class HippyDaemon(Daemon):

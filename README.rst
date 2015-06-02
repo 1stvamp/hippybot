@@ -133,6 +133,12 @@ HippyBot includes a very simple object orientated wrapper for the `HipChat API <
     [hipchat]
     api_auth_token = xxxxxxxxxxxxxxxxxxxxxxxx
 
+If you are using self-hosted Hipchat service, set up something like this:
+
+    [hipchat]
+    api_server = api.example.com
+    api_auth_token = xxxxxxxxxxxxxxxxxxxxxxxx
+
 Then you can access the wrapper via the ``api`` attribute on the bot instance, e.g. from within a command method on a plugin class::
 
     # hello_world.py

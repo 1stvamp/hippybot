@@ -1,6 +1,11 @@
 ChangeLog for hippybot
 ======================
 
+1.2.6.1 (2015-06-02)
+------------------
+
+ - Added an ability to use hippybot on self-hosted servers. See hipchat.conf.example for additional parameters.
+
 1.2.5 (2015-04-21)
 ------------------
 

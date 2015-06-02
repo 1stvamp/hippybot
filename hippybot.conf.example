@@ -1,6 +1,10 @@
 [connection]
 username = 12345_12345
 password = keepmesecret
+# The Hipchat's server name
+host = conf.hipchat.com
+# Muc Domain
+muc_domain = conf.hipchat.com
 nickname = Hippy Bot
 channels = Hippy Bot's Room
            test
@@ -16,5 +20,6 @@ load_path = /absolute/path/plugins
 	another/relative/path
 
 [hipchat]
+api_server = api.hipchat.com
 api_auth_token = xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 respond_to_all = true
