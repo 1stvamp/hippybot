@@ -133,7 +133,7 @@ HippyBot includes a very simple object orientated wrapper for the `HipChat API <
     [hipchat]
     api_auth_token = xxxxxxxxxxxxxxxxxxxxxxxx
 
-If you are using self-hosted Hipchat service, set up something like this:
+If you are using self-hosted Hipchat service, set up something like this::
 
     [hipchat]
     api_server = api.example.com
