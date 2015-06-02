@@ -1,3 +1,7 @@
 hippybot.conf
 hippybot.pid
 *.pyc
+.idea/
+.project
+.pydevproject
+*.sublime-*
