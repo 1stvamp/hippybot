@@ -5,3 +5,6 @@ hippybot.pid
 .project
 .pydevproject
 *.sublime-*
+build/
+dist/
+hippybot.egg-info/
