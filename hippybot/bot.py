@@ -9,7 +9,7 @@ import logging
 from jabberbot import botcmd, JabberBot, xmpp
 from ConfigParser import ConfigParser
 from optparse import OptionParser
-from inspect import ismethod
+from inspect import ismethod, getargspec
 from lazy_reload import lazy_reload
 
 from hippybot.hipchat import HipChatApi
@@ -222,7 +222,13 @@ class HippyBot(JabberBot):
             if not command:
                 # Otherwise we're looking for a class called Plugin which
                 # provides methods decorated with the @botcmd decorator.
-                plugin = getattr(module, 'Plugin')()
+                (plugin_args, _, _, _) = getargspec(getattr(module, 'Plugin').__init__)
+                if 'config' in plugin_args:
+                    print 'Plugin has config parameter'
+                    plugin = getattr(module, 'Plugin')(config=self._config)
+                else:
+                    print 'Plugin has no config parameter'
+                    plugin = getattr(module, 'Plugin')()
                 plugin.bot = self
                 commands = [c for c in dir(plugin)]
                 funcs = []

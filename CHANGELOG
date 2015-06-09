@@ -1,5 +1,10 @@
 ChangeLog for hippybot
 ======================
+1.2.6.2 (2015-06-10)
+------------------
+
+ - Some plugins want to already have bot's parsed config during the initialization. So, if the __init__() of the plugin class accepts the 'config' parameter - bot.py will try to pass it inside.
+   Look into hippybot/plugins/threaded_example.py for an example.
 
 1.2.6.1 (2015-06-02)
 ------------------
