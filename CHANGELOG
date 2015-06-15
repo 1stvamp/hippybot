@@ -1,5 +1,16 @@
 ChangeLog for hippybot
 ======================
+1.2.7 (unreleased)
+------------------
+
+ - Added an ability to use hippybot on self-hosted servers. See hipchat.conf.example for additional parameters.
+ - Some plugins want to already have bot's parsed config during the initialization, now if the constructor of the plugin class accepts the 'config' parameter the config will be passed a dict.
+   See hippybot/plugins/threaded_example.py for an example.
+
+1.2.6 (2015-04-21)
+------------------
+
+ - Quick fix for badly built tar pushed up to pypi.
 
 1.2.5 (2015-04-21)
 ------------------

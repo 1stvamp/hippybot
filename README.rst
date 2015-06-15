@@ -23,7 +23,7 @@ Install from PyPi::
 Configuration
 =============
 
-There is an example configuration file distrubed with HippyBot called ``hippybot.conf.example``, copy this and edit it. You will need to add an account to your Hipchat group for the bot to connect as. While logged in as the account go to the `XMPP <https://boxedice.hipchat.com/account/xmpp>`_ settings page to get the details you'll need to edit the config file.
+There is an example configuration file distributed with HippyBot called ``hippybot.conf.example``, copy this and edit it. You will need to add an account to your Hipchat group for the bot to connect as. While logged in as the account go to the `XMPP <https://boxedice.hipchat.com/account/xmpp>`_ settings page to get the details you'll need to edit the config file.
 
 Usage
 =====
@@ -131,6 +131,12 @@ HipChat API
 HippyBot includes a very simple object orientated wrapper for the `HipChat API <https://www.hipchat.com/docs/api>`_. To make use of the API you need to `create an API key <https://www.hipchat.com/groups/api>`_ and enter that into the config file under the section ``hipchat``, as an option called ``api_auth_token``, e.g.::
 
     [hipchat]
+    api_auth_token = xxxxxxxxxxxxxxxxxxxxxxxx
+
+If you are using self-hosted Hipchat service, set up something like this::
+
+    [hipchat]
+    api_server = api.example.com
     api_auth_token = xxxxxxxxxxxxxxxxxxxxxxxx
 
 Then you can access the wrapper via the ``api`` attribute on the bot instance, e.g. from within a command method on a plugin class::

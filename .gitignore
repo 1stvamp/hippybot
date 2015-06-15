@@ -1,3 +1,6 @@
 hippybot.conf
 hippybot.pid
 *.pyc
+build/
+dist/
+hippybot.egg-info/
