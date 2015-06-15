@@ -23,7 +23,7 @@ Install from PyPi::
 Configuration
 =============
 
-There is an example configuration file distrubed with HippyBot called ``hippybot.conf.example``, copy this and edit it. You will need to add an account to your Hipchat group for the bot to connect as. While logged in as the account go to the `XMPP <https://boxedice.hipchat.com/account/xmpp>`_ settings page to get the details you'll need to edit the config file.
+There is an example configuration file distributed with HippyBot called ``hippybot.conf.example``, copy this and edit it. You will need to add an account to your Hipchat group for the bot to connect as. While logged in as the account go to the `XMPP <https://boxedice.hipchat.com/account/xmpp>`_ settings page to get the details you'll need to edit the config file.
 
 Usage
 =====

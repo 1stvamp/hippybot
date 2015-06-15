@@ -25,11 +25,14 @@ POSTS = {
 API_VERSION = '1'
 BASE_URL = 'https://%(api_server)s/v%(version)s/%(section)s/%(method)s'
 
+
 class HipChatApi(object):
     """Lightweight Hipchat.com REST API wrapper
     """
+
     def __init__(self, auth_token, name=None, gets=GETS, posts=POSTS,
-                base_url=BASE_URL, api_version=API_VERSION, api_server='api.hipchat.com'):
+                 base_url=BASE_URL, api_version=API_VERSION,
+                 api_server='api.hipchat.com'):
         self._auth_token = auth_token
         self._name = name
         self._gets = gets

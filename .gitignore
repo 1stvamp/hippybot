@@ -1,10 +1,6 @@
 hippybot.conf
 hippybot.pid
 *.pyc
-.idea/
-.project
-.pydevproject
-*.sublime-*
 build/
 dist/
 hippybot.egg-info/

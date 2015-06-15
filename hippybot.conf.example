@@ -3,8 +3,10 @@ username = 12345_12345
 password = keepmesecret
 # The Hipchat's server name
 host = conf.hipchat.com
-# Muc Domain
-muc_domain = conf.hipchat.com
+# MUC Domain, for use with HipChat Server
+# set this to your self-hosted HC domain if you use it
+#muc_domain = conf.hipchat.com
+
 nickname = Hippy Bot
 channels = Hippy Bot's Room
            test
