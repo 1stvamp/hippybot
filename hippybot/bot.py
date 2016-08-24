@@ -227,6 +227,8 @@ class HippyBot(JabberBot):
             # then just use that
             command = getattr(module, name, None)
 
+            funcs = []
+            content_funcs = []
             if not command:
                 # Otherwise we're looking for a class called Plugin which
                 # provides methods decorated with the @botcmd decorator.
@@ -240,8 +242,6 @@ class HippyBot(JabberBot):
                     plugin = getattr(module, 'Plugin')()
                 plugin.bot = self
                 commands = [c for c in dir(plugin)]
-                funcs = []
-                content_funcs = []
 
                 for command in commands:
                     m = getattr(plugin, command)
