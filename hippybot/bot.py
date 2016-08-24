@@ -1,19 +1,20 @@
 #!/usr/bin/env python
+import codecs
+import imp
+import logging
 import os
 import sys
-import imp
-import codecs
 import time
 import traceback
-import logging
-from jabberbot import botcmd, JabberBot, xmpp
 from ConfigParser import ConfigParser
-from optparse import OptionParser
 from inspect import ismethod, getargspec
+from optparse import OptionParser
+
+from jabberbot import botcmd, JabberBot, xmpp
 from lazy_reload import lazy_reload
 
-from hippybot.hipchat import HipChatApi
 from hippybot.daemon.daemon import Daemon
+from hippybot.hipchat import HipChatApi
 
 # List of bot commands that can't be registered, as they would conflict with
 # internal HippyBot methods
@@ -87,8 +88,6 @@ class HippyBot(JabberBot):
                     self._load_path.append(path)
 
         self.load_plugins()
-
-        self.log.setLevel(logging.INFO)
 
     def from_bot(self, mess):
         """Helper method to test if a message was sent from this bot.
@@ -333,18 +332,21 @@ class HippyDaemon(Daemon):
 
 
 def main():
-    import logging
-    logging.basicConfig()
-
     parser = OptionParser(usage="""usage: %prog [options]""")
 
     parser.add_option("-c", "--config", dest="config_path",
                       help="Config file path")
     parser.add_option("-d", "--daemon", dest="daemonise", help="Run as a"
                       " daemon process", action="store_true")
+    parser.add_option("-l", '--log', dest='log_level',
+                      choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
+                      help='Set logging level')
     parser.add_option("-p", "--pid", dest="pid", help="PID file location if"
                       " running with --daemon")
     (options, pos_args) = parser.parse_args()
+
+    if options.log_level:
+        logging.basicConfig(level=getattr(logging, options.log_level))
 
     if not options.config_path:
         print >> sys.stderr, 'ERROR: Missing config file path'
