@@ -3,6 +3,15 @@ from hippybot.decorators import directcmd
 class Plugin(object):
     """Plugin to return passed arguments rot13'ed, @'d to the originating user.
     """
+    global_commands = ['rot13']
+    command_aliases = {
+        'rot': 'rot13',
+        'r': 'rot13'
+    }
+
+    def __init__(self, config):
+        pass
+
     @directcmd
     def rot13(self, mess, args):
         """

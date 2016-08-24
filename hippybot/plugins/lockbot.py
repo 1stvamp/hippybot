@@ -11,7 +11,9 @@ DB = os.path.expanduser("~/.techbot/techbot.db")
 class Plugin(object):
 	"""Plugin to handle knewton locking semantics
 	"""
-	def __init__(self):
+	global_commands = ['lock', 'locks', 'unlock', 'break']
+
+	def __init__(self, config):
 		self.rlock = RLock()
 		self.db = self.get_db()
 

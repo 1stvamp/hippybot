@@ -12,6 +12,11 @@ DB = os.path.expanduser("~/.techbot/score.db")
 class Plugin(object):
 	"""Plugin to handle knewton replacement of ++ bot in partychatapp
 	"""
+	global_commands = ['scores']
+
+	def __init__(self, config):
+		pass
+
 	def __init__(self):
 		self.rlock = RLock()
 		self.db = self.get_db()

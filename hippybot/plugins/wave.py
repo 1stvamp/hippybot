@@ -8,6 +8,10 @@ class Plugin(object):
     global_commands = ['\o/', 'wave']
     command_aliases = {'\o/': 'wave'}
     counts = Counter()
+
+    def __init__(self, config):
+        pass
+
     @botcmd
     def wave(self, mess, args):
         """
