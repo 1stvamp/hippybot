@@ -346,7 +346,9 @@ def main():
     (options, pos_args) = parser.parse_args()
 
     if options.log_level:
-        logging.basicConfig(level=getattr(logging, options.log_level))
+        logging.basicConfig(level=getattr(logging, options.log_level),
+                            format='%(asctime)s %(levelname)s %(message)s',
+                            datefmt='%Y-%m-%d %H:%M:%S')
 
     if not options.config_path:
         print >> sys.stderr, 'ERROR: Missing config file path'
