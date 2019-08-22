@@ -2,6 +2,11 @@ import random
 from hippybot.decorators import botcmd
 
 class Plugin(object):
+	global_commands = ['hype']
+
+	def __init__(self, config):
+		pass
+
 	@botcmd
 	def hype(self, mess, args, **kwargs):
 		"""

@@ -4,3 +4,4 @@ hippybot.pid
 build/
 dist/
 hippybot.egg-info/
+.idea/

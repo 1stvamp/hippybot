@@ -13,7 +13,10 @@ UD_SEARCH_URI = "http://www.urbandictionary.com/iphone/search/define"
 class Plugin(object):
     """Plugin to lookup definitions from urbandictionary.com
     """
-    global_commands = ('udefine',)
+    global_commands = ['udefine']
+
+    def __init__(self, config):
+        pass
 
     @directcmd
     def udefine(self, mess, args):
